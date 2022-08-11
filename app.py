@@ -112,10 +112,10 @@ def add_song():
         db.session.add(new_song)
         db.session.commit()
         
-        return redirect("/playlists")
+        return redirect("/songs")
 
     else:
-        return render_template("new_playlist.html", form=form)
+        return render_template("new_song.html", form=form)
 
 
 @app.route("/playlists/<int:playlist_id>/add-song", methods=["GET", "POST"])
@@ -124,20 +124,23 @@ def add_song_to_playlist(playlist_id):
 
     playlist = Playlist.query.get_or_404(playlist_id)
     form = NewSongForPlaylistForm()
-
+    print('Line 127')
     # Restrict form to songs not already on this playlist
 
     curr_on_playlist = [s.id for s in playlist.songs]
     form.song.choices = (db.session.query(Song.id, Song.title)
                       .filter(Song.id.notin_(curr_on_playlist))
                       .all())
-
+    print('Line 134', playlist_id)
     if form.validate_on_submit():
+        print('Line 136', playlist_id)
         playlist_song = PlaylistSong(songs_id=form.song.data, playlist_id=playlist_id)
         db.session.add(playlist_song)
-
+        db.session.commit()
+        print('Line 138')
         return redirect(f"/playlists/{playlist_id}")
+    else:
 
-    return render_template("add_song_to_playlist.html",
+        return render_template("add_song_to_playlist.html",
                              playlist=playlist,
                              form=form)

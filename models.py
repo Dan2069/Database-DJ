@@ -14,7 +14,7 @@ class Playlist(db.Model):
     name = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
-    songs = db.relationship("Song")
+    songs = db.relationship("Song", secondary='playlists_songs', backref='playlists')
 
 
 class Song(db.Model):
@@ -25,9 +25,6 @@ class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.Text, nullable=False)
     artist = db.Column(db.Text, nullable=False)
-    playlist_id = db.Column(db.Integer, db.ForeignKey("playlists.id"))
-
-    playlist = db.relationship("Playlist")
 
 
 
@@ -39,8 +36,8 @@ class PlaylistSong(db.Model):
     __tablename__ = "playlists_songs"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    playlist_id = db.Column(db.Integer, db.ForeignKey("playlists.id"), primary_key=True, nullable=False)
-    songs_id = db.Column(db.Integer, db.ForeignKey("songs.id"), primary_key=True, nullable=False)
+    playlist_id = db.Column(db.Integer, db.ForeignKey("playlists.id"))
+    songs_id = db.Column(db.Integer, db.ForeignKey("songs.id"))
 
     # Should I add relationships to ease the selection of data???
 
